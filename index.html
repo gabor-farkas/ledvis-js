@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <script src="browser/render2d.js"></script>
+        <script src="scrplay/scrplay.js"></script>
+        <script src="effects/test/test.js"></script>
+        <style>
+                #_2dscreen canvas {
+                    width: 512px;
+                    height: 512px;
+                }
+        </style>
+    </head>
+    <body>
+        <div id='_2dscreen'></div>
+        <script>
+            let context = {};
+            context.screen = [];
+            context.renderer = init2dRenderer(context, document.getElementById('_2dscreen'));
+            context.effect = testEffect(context);
+            context.scrplay = startScreenplay(context);
+        </script>
+    </body>
+</html>
