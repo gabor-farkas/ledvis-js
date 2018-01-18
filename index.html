@@ -3,6 +3,8 @@
         <script src="browser/render2d.js"></script>
         <script src="scrplay/scrplay.js"></script>
         <script src="effects/test/test.js"></script>
+        <script src="effects/random.js"></script>
+        <script src="effects/kukac/kukac.js"></script>
         <style>
                 #_2dscreen canvas {
                     width: 512px;
@@ -16,7 +18,9 @@
             let context = {};
             context.screen = [];
             context.renderer = init2dRenderer(context, document.getElementById('_2dscreen'));
-            context.effect = testEffect(context);
+            //context.effect = testEffect(context);
+            context.effect = kukacEffect(context);
+            context.effect.initialize();
             context.scrplay = startScreenplay(context);
         </script>
     </body>
