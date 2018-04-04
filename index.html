@@ -5,6 +5,8 @@
         <script src="effects/test/test.js"></script>
         <script src="effects/random.js"></script>
         <script src="effects/kukac/kukac.js"></script>
+        <script src="effects/matrix/chars.js"></script>
+        <script src="effects/matrix/matrix.js"></script>
         <style>
                 #_2dscreen canvas {
                     width: 512px;
@@ -19,7 +21,8 @@
             context.screen = [];
             context.renderer = init2dRenderer(context, document.getElementById('_2dscreen'));
             //context.effect = testEffect(context);
-            context.effect = kukacEffect(context);
+            //context.effect = kukacEffect(context);
+            context.effect = matrixEffect(context);
             context.effect.initialize();
             context.scrplay = startScreenplay(context);
         </script>
