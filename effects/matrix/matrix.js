@@ -1,4 +1,5 @@
 function matrixEffect(context) {
+    // falling chars
     let counter = 0;
     let counter2 = 0;
     let charcode = 0;
@@ -11,6 +12,17 @@ function matrixEffect(context) {
     ];
     const mblurphases = 8;
     let mblur = [];
+
+    // matrix effect
+    const blockheight = 16 * 6
+    const numblocks = 6
+    const blocks_size = blockheight * 6 * numblocks
+    let blocks = []; // of size blocks_size
+    let blockdata = [];
+    let lastrow = 0;
+    let mcounter = 24*4;
+    let part = 0;
+    let speed = 16;
 
     fallStart = function () {
         counter = 0;
@@ -52,8 +64,6 @@ function matrixEffect(context) {
     }
 
     fallRender = function () {
-        for (let i = 0; i < 24 * 24; i++)
-            context.screen[i] = 0;
         for (let i = 0; i < counter; i++) {
             putChar2(255, i * 6, 9, fallChars[i][0])
         }
@@ -61,6 +71,115 @@ function matrixEffect(context) {
             return;
         for (let i = 0; i < mblurphases; i++) {
             putChar2(mblur[i][1], xpos, mblur[i][0], charcode);
+        }
+    }
+
+    // matrix stuff
+    matrixStart = function () {
+        for (let i = 0; i < numblocks * blockheight * 5; i ++) {
+            blocks[i] = 0;
+        }
+        for (let i = 0; i < numblocks; i++) {
+            newBlock(i);
+        }
+    }
+
+    newBlock = function (index) {
+        blockdata[index] = {};
+        blockdata[index].columnIndex = lastrow;
+        lastrow = (lastrow + 1) & 3;
+        let numCharsInColumn = Math.floor(Math.random() * 11) + 5;
+        let heightPx = numCharsInColumn * 6;
+        blockdata[index].heightPx = heightPx;
+        let offset = - heightPx * 16 - Math.floor(Math.random() * 5 * 16);
+        blockdata[index].offset = offset;
+        let destOffset = index * blockheight * 5;
+        for (let i = numCharsInColumn; i > 0; i--) {
+            let pcColor = (i == 1) ? 255 : 192;
+            let charCode = Math.floor(Math.random() * numChars) + 1;
+            putChar(pcColor, charCode, destOffset);
+            destOffset += 6*5;
+        }
+    }
+
+    matrixRender = function() {
+        for (let i = 0; i < 24 * 24; i++) {
+            context.screen[i] = 0;
+        }
+        
+        let blockIndex = 0;
+        for (let i = 0; i < numblocks; i ++) {
+            let matrixIndex = 6 * blockdata[i].columnIndex;
+            let ebx = blockdata[i].offset;
+            ebx = (-ebx >> 4); 
+            let ecx = blockdata[i].heightPx
+            let esi = blockIndex;
+            if (ebx < ecx) {
+                if (ebx != 0) {
+                    if (ebx <= 0) {
+                        let ecx = ebx + 24
+                        let eax = - 24 * ebx;
+                        matrixIndex += eax;
+                    }  else { // frskipfromsrc
+                        ecx -= ebx;
+                        ebx *= 5;
+                        esi += ebx;
+                    }
+                } // .frstart
+                if (ecx > 0) {
+                    ecx = Math.max(ecx, 24);
+                    for (;ecx > 0;ecx --) {
+                        for (let j = 0; j < 5; j ++) {
+                            context.screen[matrixIndex++] = blocks[esi++];
+                        }
+                        matrixIndex += 24 - 5;
+                    }
+                } // frl2end
+            } // .frskipall
+            blockIndex += blockheight * 5;
+        }
+    }
+
+    matrixStep = function() {
+        if (mcounter-- == 0) {
+            if (part == 0) {
+                part ++;
+                mcounter = 12; //mc_part1
+            }  else {// .fs30
+                if (part == 1) {
+                    part ++;
+                }
+            }
+        } // .fs3
+        if (part == 1) {
+            speed ++;
+        } // .fs4
+
+        for (let i = 0; i < numblocks; i ++) {
+            blockdata[i].offset += speed;
+            if (blockdata[i].offset >= 24*16) {
+                if (part != 2) {
+                    newBlock(i);
+                } else {
+                    blockdata[i].offset = 24 * 16;
+                }
+            } // .fs1 
+        }
+
+        if (part == 2) {
+            fallStep();
+        } // .fs5
+    }
+
+    // common stuff
+
+    putChar = function (pcColor, charCode, destOffset) {
+        for (let charRow = 0; charRow < 5; charRow++) {
+            let rowPixels = matrixChars[charCode][charRow];
+            for (let charCol = 0; charCol < 5; charCol++) {
+                blocks[destOffset++] = (rowPixels & 16) ? pcColor : 0;
+                rowPixels <<= 1;
+            }
         }
     }
 
@@ -79,14 +198,16 @@ function matrixEffect(context) {
 
     return {
         initialize: () => {
+            matrixStart();
             fallStart();
         },
         destroy: () => {
         },
         step: () => {
-            fallStep();
+            matrixStep();
         },
         render: () => {
+            matrixRender();
             fallRender();
         }
     }
