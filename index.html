@@ -10,6 +10,7 @@
         <script src="effects/matrix/chars.js"></script>
         <script src="effects/matrix/matrix.js"></script>
         <script src="effects/scroll/scroll.js"></script>
+        <script src="effects/sideeffects/sideeffects.js"></script>
         <style>
                 #_2dscreen canvas {
                     width: 512px;
@@ -26,7 +27,7 @@
             //context.effect = testEffect(context);
             //context.effect = kukacEffect(context);
             //context.effect = matrixEffect(context);
-            context.effect = scrollEffect(context);
+            context.effect = scrollEffect(context, sideEffect, 2);
             context.effect.initialize();
             context.scrplay = startScreenplay(context);
         </script>

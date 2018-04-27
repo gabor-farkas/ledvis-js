@@ -22,6 +22,10 @@ window.font = (function font() {
         }
     });
     let currentFontDef = fontDefs[selectedFontIndex];
+    this.selectFont = function (index) {
+        currentFontDef = fontDefs[index];
+        selectedFontIndex = index;
+    }
     this.getCharWidth = function (charCode) {
         if (!currentFontDef.asciitab[charCode])
             return 0; // char not defined
@@ -29,6 +33,15 @@ window.font = (function font() {
         let pcCharWidth = currentFontDef.rawData[fontOffset];
         return pcCharWidth;
     }
+
+    this.writeText = function (text, ffX, ffY, bufferMatrix, bufferWidth, bufferHeight, color, bgColor) {
+        let x = 0;
+        for (let i = 0; i < text.length; i ++) {
+            let width = putChar(text.charCodeAt(i), ffX + x, ffY, bufferMatrix, bufferWidth, bufferHeight, color, bgColor);
+            x+= width;
+        }
+    }
+
     this.putChar = function (charCode, ffX, ffY, bufferMatrix, bufferWidth, bufferHeight, color, bgColor) {
         if (!currentFontDef.asciitab[charCode])
             return; // char not defined
@@ -36,7 +49,7 @@ window.font = (function font() {
         let pcCharWidth = currentFontDef.rawData[fontOffset];
         fontOffset += 4;
         if (ffX < -24 || ffX > bufferWidth)
-            return;
+            return pcCharWidth;
         let bitpos = 0;
         let pcY = ffY;
         for (let line = 0; line < currentFontDef.fontHeight; line++) { // plc1
@@ -60,6 +73,7 @@ window.font = (function font() {
             // pc3
             pcY++;
         }
+        return pcCharWidth;
     }
     return this;
 })();
