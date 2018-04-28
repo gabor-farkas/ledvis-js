@@ -64,7 +64,7 @@ function lzw() {
 
         let eax = 1;
         let ebx = eax;
-        let ecx = lzw_cww
+        let ecx = lzw_cww;
         ebx <<= ecx;
         ebx--;
         lzw_cwwmask = ebx;
@@ -73,7 +73,7 @@ function lzw() {
         ecx--;
         eax <<= ecx;
         let lzw_dicthidden = eax
-        let lzw_dindex = 0; //index in dicthidden
+        let lzw_dindex = eax; //index in dicthidden
 
         let edi = 0; // index in lzw_destination
         ucl0: while(true) {
@@ -83,7 +83,6 @@ function lzw() {
                 lzw_destination[edi++] = eax;
                 lzw_lastcwlen = 1;
             } else {// uc0;
-                ebx = eax;
                 eax -= lzw_dicthidden;
                 ecx = lzw_dict[eax].cwlength;
                 lzw_lastcwlen = ecx;
@@ -96,9 +95,9 @@ function lzw() {
                 //;-- inc cww
                 lzw_cww++;
                 eax = lzw_cwwmask;
-                eax <= 1;
+                eax <<= 1;
                 eax++;
-                lcw_cwwmask = eax;
+                lzw_cwwmask = eax;
                 lzw_cwwmask2 <<= 1;
             }   //.uc1:	
             let esi = lzw_dnext;

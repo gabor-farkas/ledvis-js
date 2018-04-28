@@ -11,6 +11,7 @@
         <script src="effects/matrix/matrix.js"></script>
         <script src="effects/scroll/scroll.js"></script>
         <script src="effects/sideeffects/sideeffects.js"></script>
+        <script src="effects/animplay/animplay.js"></script>
         <script src="lzw/lzw.js"></script>
         <script src="lzw/tloader.js"></script>
         <style>
@@ -30,6 +31,7 @@
             //context.effect = kukacEffect(context);
             //context.effect = matrixEffect(context);
             context.effect = scrollEffect(context, sideEffect, 2);
+            context.effect = animplayEffect(context);
             context.effect.initialize();
             context.scrplay = startScreenplay(context);
         </script>

@@ -1,5 +1,8 @@
 function startScreenplay(context) {
-    const MAIN_STEP_INTERVAL = 100; //ms
+    /* we originally had a PIT timer (1193182 Hz) with
+     * a divisor rate of 0 (65536), so it's 18Hz
+    */
+    const MAIN_STEP_INTERVAL = 55; //ms
     context.timeMs = 0;
     function mainStep() {
         context.timeMs += MAIN_STEP_INTERVAL;
