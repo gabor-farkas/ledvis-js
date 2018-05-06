@@ -1,6 +1,11 @@
 window.template = (function () {
     let uncompressed = [];
-    let indexes;
+    let descriptorsRaw;
+    let animDescriptors = [];
+    let loadResolve = null;
+    let loaded = new Promise((resolve, reject) => {
+        loadResolve = resolve;
+    });
     function loadTemplate() {
         fetch('data/images.fls').then(response => {
             response.arrayBuffer().then(buffer => {
@@ -8,35 +13,54 @@ window.template = (function () {
                 let tl_templatelen = fls[0] + (fls[1] << 8);
                 let tl_datalen = fls[4 + tl_templatelen] + (fls[5 + tl_templatelen] << 8) +
                     (fls[6 + tl_templatelen] << 16);
-                indexes = new Uint8Array(buffer.slice(4, tl_templatelen));
+                descriptorsRaw = new Uint8Array(buffer.slice(4, tl_templatelen));
                 let compressedData = new Uint8Array(buffer.slice(12 + tl_templatelen));
                 lzw().uncompress(compressedData, uncompressed);
-                decodeAnimation();
-                /*
-                for (let i = 0; i < 64; i ++) {
-                    let x = [];
-                    for (let j = 0; j < 16; j ++) {
-                        x.push(uncompressed[i*16+j].toString(16));
-                    }
-                    console.log(x);
-                }
-                */
-            })
+                decodeAnimations();
+                loadResolve(true);
+            });
         })
     }
-    function decodeAnimation() {
-        let frameCount = 0x86;
-        let src = uncompressed.slice(0, 24*24*frameCount);
+    function decodeAnimations() {
         let srcIndex = 0;
-        for (let i = 0; i < 24 * 24; i ++) {
-            for (let j = 0; j < frameCount; j ++) {
-                uncompressed[j * 24 * 24 + i] = src[srcIndex++];
+        while (srcIndex < descriptorsRaw.length) {
+            if (descriptorsRaw[srcIndex] == 2) {
+                srcIndex += 5;
+                let name = '';
+                let b = 0;
+                while ((b = descriptorsRaw[srcIndex++]) != 0) {
+                    name += String.fromCharCode(b);
+                }
+                let frameCount = descriptorsRaw[srcIndex];
+                let offset = descriptorsRaw[srcIndex + 13]
+                        + (descriptorsRaw[srcIndex + 14] << 8)
+                        + (descriptorsRaw[srcIndex + 15] << 16)
+                        + (descriptorsRaw[srcIndex + 16] << 24);
+                animDescriptors.push({
+                    offset: offset,
+                    frameCount: frameCount,
+                    name: name
+                });
+                let src = uncompressed.slice(offset, 24*24*frameCount + offset);
+                let srcIndex2 = 0;
+                for (let i = 0; i < 24 * 24; i ++) {
+                    for (let j = 0; j < frameCount; j ++) {
+                        uncompressed[offset + j * 24 * 24 + i] = src[srcIndex2++];
+                    }
+                }
+                srcIndex += 17;
+            } else {
+                //console.log('oh noes', descriptorsRaw[srcIndex], srcIndex);
+                let blockLen = descriptorsRaw[srcIndex + 1];
+                srcIndex += blockLen;
             }
         }
     }
     return {
         loadTemplate: loadTemplate,
-        data: uncompressed
+        data: uncompressed,
+        animDescriptors: animDescriptors,
+        loaded: loaded
     }
 })();
 

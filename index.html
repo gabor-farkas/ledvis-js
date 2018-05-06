@@ -30,10 +30,12 @@
             //context.effect = testEffect(context);
             //context.effect = kukacEffect(context);
             //context.effect = matrixEffect(context);
-            context.effect = scrollEffect(context, sideEffect, 2);
-            context.effect = animplayEffect(context);
-            context.effect.initialize();
-            context.scrplay = startScreenplay(context);
+            //context.effect = scrollEffect(context, sideEffect, 2);
+            window.template.loaded.then(() => {
+                context.effect = animplayEffect(context);
+                context.effect.initialize();
+                context.scrplay = startScreenplay(context);
+            });
         </script>
     </body>
 </html>
