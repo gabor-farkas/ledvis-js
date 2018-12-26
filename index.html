@@ -2,6 +2,7 @@
     <head>
         <script src="browser/render2d.js"></script>
         <script src="scrplay/scrplay.js"></script>
+        <script src="scrplay/script.js"></script>
         <script src="utils/fontData.js"></script>
         <script src="utils/font.js"></script>
         <script src="effects/test/test.js"></script>
@@ -14,6 +15,7 @@
         <script src="effects/animplay/animplay.js"></script>
         <script src="lzw/lzw.js"></script>
         <script src="lzw/tloader.js"></script>
+
         <style>
                 #_2dscreen canvas {
                     width: 512px;
@@ -25,16 +27,12 @@
         <div id='_2dscreen'></div>
         <script>
             let context = {};
+            window.matrix = {};
+            window.matrix.fastMode = false;
             context.screen = [];
             context.renderer = init2dRenderer(context, document.getElementById('_2dscreen'));
-            //context.effect = testEffect(context);
-            //context.effect = kukacEffect(context);
-            //context.effect = matrixEffect(context);
-            //context.effect = scrollEffect(context, sideEffect, 2);
             window.template.loaded.then(() => {
-                context.effect = animplayEffect(context);
-                context.effect.initialize();
-                context.scrplay = startScreenplay(context);
+                controlScript(context);
             });
         </script>
     </body>

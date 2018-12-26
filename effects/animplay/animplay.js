@@ -1,5 +1,6 @@
-function animplayEffect(context) {
+function animplayEffect(context, animName) {
     let frame = 0;
+    let animDescriptor = null;
     return {
         initialize: () => {
         },
@@ -8,9 +9,12 @@ function animplayEffect(context) {
         },
         step: () => {
             frame++;
+            if (frame >= animDescriptor.frameCount) {
+                context.effectFinished();
+            }
         },
         render: () => {
-            let animDescriptor = window.template.animDescriptors[5];
+            animDescriptor = window.template.animDescriptors.filter(desc => desc.name == animName)[0];
             for (let i = 0; i < 24 * 24; i++) {
                 context.screen[i] = window.template.data[animDescriptor.offset + frame * 24 * 24 + i] * 4;
             }

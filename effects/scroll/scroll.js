@@ -1,6 +1,5 @@
-function scrollEffect(context, sideEffectFactory, effectNumber) {
+function scrollEffect(context, sideEffectFactory, text, effectNumber) {
     let position = 0;
-    let text = 'Hello world';
     let textPixelWidth = 0;
     let scrollOutbuf = [];
     let sideEffect;
@@ -22,7 +21,7 @@ function scrollEffect(context, sideEffectFactory, effectNumber) {
         step: () => {
             position ++;
             if (position >= textPixelWidth + 36) {
-                position = 0;
+                context.effectFinished();
             }
         },
         render: () => {

@@ -24,14 +24,14 @@ function matrixEffect(context) {
     let part = 0;
     let speed = 16;
 
-    fallStart = function () {
+    let fallStart = function () {
         counter = 0;
         counter2 = 0;
         charcode = 0;
         fallStartChar(fallChars[0]);
     }
 
-    fallStartChar = function (charCodeAndPos) {
+    let fallStartChar = function (charCodeAndPos) {
         charcode = charCodeAndPos[0];
         xpos = charCodeAndPos[1];
         mblur = [];
@@ -42,7 +42,7 @@ function matrixEffect(context) {
         }
     }
 
-    fallStep = function () {
+    let fallStep = function () {
         counter2++;
         if (counter2 >= 8) {
             if (counter + 1 < 4) {
@@ -63,7 +63,7 @@ function matrixEffect(context) {
         mblurlast[0] = Math.min(9, mblurlast[0] + 3);
     }
 
-    fallRender = function () {
+    let fallRender = function () {
         for (let i = 0; i < counter; i++) {
             putChar2(255, i * 6, 9, fallChars[i][0])
         }
@@ -75,7 +75,7 @@ function matrixEffect(context) {
     }
 
     // matrix stuff
-    matrixStart = function () {
+    let matrixStart = function () {
         for (let i = 0; i < numblocks * blockheight * 5; i ++) {
             blocks[i] = 0;
         }
@@ -84,7 +84,7 @@ function matrixEffect(context) {
         }
     }
 
-    newBlock = function (index) {
+    let newBlock = function (index) {
         blockdata[index] = {};
         blockdata[index].columnIndex = lastrow;
         lastrow = (lastrow + 1) & 3;
@@ -102,7 +102,7 @@ function matrixEffect(context) {
         }
     }
 
-    matrixRender = function() {
+    let matrixRender = function() {
         for (let i = 0; i < 24 * 24; i++) {
             context.screen[i] = 0;
         }
@@ -127,7 +127,7 @@ function matrixEffect(context) {
                     }
                 } // .frstart
                 if (ecx > 0) {
-                    ecx = Math.max(ecx, 24);
+                    ecx = Math.min(ecx, 24);
                     for (;ecx > 0;ecx --) {
                         for (let j = 0; j < 5; j ++) {
                             context.screen[matrixIndex++] = blocks[esi++];
@@ -140,7 +140,7 @@ function matrixEffect(context) {
         }
     }
 
-    matrixStep = function() {
+    let matrixStep = function() {
         if (mcounter-- == 0) {
             if (part == 0) {
                 part ++;
@@ -173,7 +173,7 @@ function matrixEffect(context) {
 
     // common stuff
 
-    putChar = function (pcColor, charCode, destOffset) {
+    let putChar = function (pcColor, charCode, destOffset) {
         for (let charRow = 0; charRow < 5; charRow++) {
             let rowPixels = matrixChars[charCode][charRow];
             for (let charCol = 0; charCol < 5; charCol++) {
@@ -183,7 +183,7 @@ function matrixEffect(context) {
         }
     }
 
-    putChar2 = function (pccolor, pcX, pcY, charIndex) {
+    let putChar2 = function (pccolor, pcX, pcY, charIndex) {
         for (let y = 0, sy = pcY; y < 5; y++ , sy++) {
             if (sy < 0 || sy > 23) continue;
             let charLine = matrixChars[charIndex][y];
@@ -200,6 +200,7 @@ function matrixEffect(context) {
         initialize: () => {
             matrixStart();
             fallStart();
+            setTimeout(context.effectFinished, 11 * 1000);
         },
         destroy: () => {
         },

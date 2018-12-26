@@ -37,7 +37,7 @@ window.font = (function font() {
     this.writeText = function (text, ffX, ffY, bufferMatrix, bufferWidth, bufferHeight, color, bgColor) {
         let x = 0;
         for (let i = 0; i < text.length; i ++) {
-            let width = putChar(text.charCodeAt(i), ffX + x, ffY, bufferMatrix, bufferWidth, bufferHeight, color, bgColor);
+            let width = this.putChar(text.charCodeAt(i), ffX + x, ffY, bufferMatrix, bufferWidth, bufferHeight, color, bgColor);
             x+= width;
         }
     }
