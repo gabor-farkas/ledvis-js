@@ -1,3 +1,5 @@
+// TODO nwp_params		db	5,5,3,5,4,2
+// as letter_increment
 function nwpEffect(context, srcText) {
     function fx1Text(text, buf, x, y) {
         font.writeText(text, x, y, buf, 24, 24, 254, 255);
@@ -26,17 +28,17 @@ function nwpEffect(context, srcText) {
         }
     }
 
+    function copy(buf, srcIndex, destIndex, len) {
+        for (let i = 0; i < len ; i ++) {
+            context.screen[destIndex++] = buf[srcIndex++];
+        }
+    }
     function horLines(buf1, buf2) {
         let bl = counter + 1;
         let bh = 24 - bl;
         let src1 = 0;
         let src2 = 0;
         let dst = 0;
-        function copy(buf, srcIndex, destIndex, len) {
-            for (let i = 0; i < len ; i ++) {
-                context.screen[destIndex++] = buf[srcIndex++];
-            }
-        }
         for (let i = 0; i < 12; i ++) {
             // odd line to the left
             src1 += bl;
@@ -69,7 +71,73 @@ function nwpEffect(context, srcText) {
         }
     }
 
-    let effects = [fadeBl, fadeCr, horLines];
+    function horzSclr(buf1, buf2) {
+        let src1 = 0;
+        let src2 = 0;
+        let p = 0;
+        let bl = counter;
+        let bh = 24 - counter;
+        for (let i = 0; i < 24; i ++) {
+            src1 += bl;
+            copy(buf1, src1, p, bh);
+            p+= bh;
+            src1 += bh;
+            copy(buf2, src2, p, bl);
+            p+= bl;
+            src2 += 24;
+        }
+    }
+
+    function vertbars(buf1, buf2) {
+        let bl = (counter + 2) / 2;
+        let bh = (12 - bl - 1) * 2;
+        let src1 = 0;
+        let src2 = 0;
+        let p = 0;
+        for (let i = 0; i < 24; i ++) {
+            copy(buf2, src2, p, bl);
+            src2 += bl; p += bl; src1 += bl;
+            copy(buf1, src1, p, bh);
+            src1 += bh; p += bh; src2 += bh;
+            copy(buf2, src2, p, bl);
+            src2 += bl; p += bl; src1 += bl;
+        }
+    }
+
+    function ptab(buf1, buf2) {
+        let tab = [0,0,3,3,6,6,9,9,
+		1,1,4,4,7,7,10,10,
+        2,2,5,5,8,8,11,11];
+        let ah = counter;
+        let bl = counter % 12;
+        let src1 = 0;
+        let src2 = 0;
+        let p = 0;
+        for (let a = 0; a < 4; a ++) {
+            let edx = 0;
+            for (let b = 0; b < 3; b ++) {
+                for (let c = 0; c < 6; c ++) {
+                    for (let d = 0; d < 8; d++) {
+                        let al = buf1[src1++];
+                        if (ah >= 12) al = 0;
+                        if (bl >= tab[edx]) {
+                            al = buf2[src2];
+                            if (ah < 12) {
+                                al = 0;
+                            }
+                        }
+                        context.screen[p++] = al;
+                        src2 ++;
+                        edx ++;
+                    }
+                    edx -= 8;
+                }
+                edx += 8;
+            }
+        }
+    }
+
+    let effects = [fadeBl, fadeCr, horLines, horzSclr, ptab, vertbars];
     let effect = null;
 
     return {
@@ -100,7 +168,7 @@ function nwpEffect(context, srcText) {
             }
             fx1Text(text[image], buf1, 3, -4);
             fx1Text(text[image + 1], buf2, 3, -4);
-            horLines(buf1, buf2);
+            ptab(buf1, buf2);
         },
     }
 }
