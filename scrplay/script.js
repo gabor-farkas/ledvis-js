@@ -49,7 +49,7 @@ function controlScript(context) {
     }
 
     // nagybetus betunkenti effekt minden sracra + animok
-    function* massNwp(names) {
+    function* massNames(names) {
         for (let i = 0; i < 27; i ++) {
             names[i][1]; // capitalized
             yield scrollEffect(context, sideEffect, names[i][1], 1);
@@ -57,5 +57,12 @@ function controlScript(context) {
         }
     }
 
+    // nagybetus betunkenti effekt minden sracra + animok
+    function* massNwp(names) {
+        for (let i = 0; i < 27; i ++) {
+            yield nwpEffect(context, names[i][1]);
+            yield animplayEffect(context, names[i][2]);
+        }
+    }
 
 }
