@@ -95,6 +95,7 @@ const tanarakmeg = "Tanáraink voltak még:   "+
     function* script(names) { // I never though I would actually use generator functions for anything ...
         yield matrixEffect(context);
         yield scrollEffect(context, sideEffect, firstText, 2);
+        yield* massNwp(names);
         while(true) {
             let rnd = Math.random() * 340;
             if (rnd < 80) {
