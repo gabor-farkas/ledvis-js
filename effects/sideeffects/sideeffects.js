@@ -71,7 +71,7 @@ function sideEffect(context, scrollOutbuf, effectNumber) {
                 }
             }
             [im0, im1, im2][effectNumber]();
-            // _pef_0
+            // _pef_0 (all pefs were equal at the end)
             for (let y = 0; y < 24; y++) {
                 for (let x = 0; x < 24; x++) {
                     let al = outline[48 + 12 + 48 * y + x];

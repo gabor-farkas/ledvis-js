@@ -1,4 +1,24 @@
 window.font = (function font() {
+    
+    const mapping = {
+        'Ú': '\xDA',
+        'é': '\xE9',
+        'í': '\xED',
+        'á': '\xE1',
+        'ű': '\xFB',
+        'ö': '\xF6',
+        'ő': '\xF5',
+        'Ő': '\xD5',
+        'ó': '\xF3',
+        'Ó': '\xD3',
+        'Á': '\xC1',
+        'Í': '\xCD',
+        'É': '\xC9',
+        'Ö': '\xD6',
+        'ü': '\xFC',
+        'Ü': '\xDC',   
+    }
+    
     let fontRawData = [fonts.font1, fonts.font2];
     let fontDefs = [];
     let selectedFontIndex = 0;
@@ -43,6 +63,10 @@ window.font = (function font() {
     }
 
     this.putChar = function (charCode, ffX, ffY, bufferMatrix, bufferWidth, bufferHeight, color, bgColor) {
+        let char = String.fromCharCode(charCode);
+        if (mapping.hasOwnProperty(char)) {
+            charCode = mapping[char].charCodeAt(0);
+        }
         if (!currentFontDef.asciitab[charCode])
             return; // char not defined
         let fontOffset = currentFontDef.asciitab[charCode];

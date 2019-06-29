@@ -8,7 +8,11 @@ function kukacEffect(context) {
     const possibleDirections = [
         [0, -1], [1, 0], [0, 1], [-1, 0]
     ];
+    gameCountdown = 3;
     restartGame = function () {
+        if (--gameCountdown <= 0) {
+            context.effectFinished();
+        }
         pixels = [];
         for (let i = 0; i < initiallen; i++) {
             pixels.push([12, 12 + i]);

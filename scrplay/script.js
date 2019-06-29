@@ -1,38 +1,88 @@
 function controlScript(context) {
-    const firstText = "      \xDAjpesti K\xE9t Tan\xEDt\xE1si Nyelv\xFB M\xFBszaki Szakk\xF6z\xE9piskola és Gimn\xE1zium, 1998-2003, 13.H, osztályf\xF5n\xF6k: Fekete Katalin        ";
+    const firstText = "      Újpesti Két Tanítási Nyelvű Műszaki Szakközépiskola és Gimnázium, 1998-2003, 13.H, osztályfőnök: Fekete Katalin        ";
     //context.effect = testEffect(context);
     //context.effect = kukacEffect(context);
     // context.effect = matrixEffect(context);
     // context.effect = animplayEffect(context);
+
+
     const names = [
-        ["Ak\xF3 K\xE1roly","AK\xD3 K\xC1ROLY","Karcsi"],
+        ["Akó Károly","AKÓ KÁROLY","Karcsi"],
         ["Albert Viktor","ALBERT VIKTOR","Veek"],
-        ["B\xEDr\xF3 J\xE1nos K\xE1lm\xE1n","B\xCDR\xD3 J\xC1NOS","BJ"],
-        ["B\xEDr\xF3 Zolt\xE1n L\xE1szl\xF3","B\xCDR\xD3 ZOLT\xC1N","BZ"],
-        ["Cserv\xE1k \xC1d\xE1m","CSERV\xC1K \xC1D\xC1M","Llamma"],
-        ["Csizmadia P\xE9ter","CSIZMADIA P\xC9TER","Csizma"],
-        ["Farkas G\xE1bor","FARKAS G\xC1BOR","Ordas"],
-        ["F\xF6ldi Istv\xE1n","F\xD6LDI ISTV\xC1N","Mazsy"],
-        ["G\xE9bert Csaba Tam\xE1s","G\xC9BERT CSABA","Csuba"],
-        ["Gub\xE1n P\xE9ter","GUB\xC1N P\xC9TER","Guban"],
-        ["Juh\xE1sz P\xE9ter","JUH\xC1SZ P\xC9TER","Juhasz"],
-        ["Kiss Bal\xE1zs","KISS BAL\xC1ZS","Balu"],
-        ["Koll\xE1r L\xE1szl\xF3","KOLL\xC1R L\xC1SZL\xD3","Laci"],
-        ["Koll\xE1r Tam\xE1s","KOLL\xC1R TAM\xC1S","Mutz"],
-        ["Kuklis Zolt\xE1n","KUKLIS ZOLT\xC1N","Kukli"],
-        ["Kov\xE1cs Gy\xF6rgy","KOV\xC1CS GY\xD6RGY","Gyuri"],
-        ["K\xF5v\xE1ri Tam\xE1s","K\xF5V\xC1RI TAM\xC1S","Kovari"],
-        ["K\xFCrti \xC1rp\xE1d Istv\xE1n","K\xDCRTI \xC1RP\xC1D","Arpi"],
+        ["Bíró János Kálmán","BÍRÓ JÁNOS","BJ"],
+        ["Bíró Zoltán László","BÍRÓ ZOLTÁN","BZ"],
+        ["Cservák Ádám","CSERVÁK ÁDÁM","Llamma"],
+        ["Csizmadia Péter","CSIZMADIA PÉTER","Csizma"],
+        ["Farkas Gábor","FARKAS GÁBOR","Ordas"],
+        ["Földi István","FÖLDI ISTVÁN","Mazsy"],
+        ["Gébert Csaba Tamás","GÉBERT CSABA","Csuba"],
+        ["Gubán Péter","GUBÁN PÉTER","Guban"],
+        ["Juhász Péter","JUHÁSZ PÉTER","Juhasz"],
+        ["Kiss Balázs","KISS BALÁZS","Balu"],
+        ["Kollár László","KOLLÁR LÁSZLÓ","Laci"],
+        ["Kollár Tamás","KOLLÁR TAMÁS","Mutz"],
+        ["Kuklis Zoltán","KUKLIS ZOLTÁN","Kukli"],
+        ["Kovács György","KOVÁCS GYÖRGY","Gyuri"],
+        ["Kővári Tamás","KŐVÁRI TAMÁS","Kovari"],
+        ["Kürti Árpád István","KÜRTI ÁRPÁD","Arpi"],
         ["Mahunka Lajos Zsolt","MAHUNKA LAJOS","Lajos"],
-        ["Moln\xE1r J\xF3zsef G\xE1bor","MOLN\xC1R J\xD3ZSEF","Joe"],
-        ["Papp Zolt\xE1n","PAPP ZOLT\xC1N","Papp"],
-        ["Tam\xE1si Ferenc","TAM\xC1SI FERENC","Feri"],
-        ["Tanai Tam\xE1s","TANAI TAM\xC1S","Tanai"],
-        ["Ujfaludi Andr\xE1s","UJFALUDI ANDR\xC1S","Umbi"],
-        ["V\xE1radi Attila","V\xC1RADI ATTILA","Ati"],
-        ["V\xE1s\xE1rhelyi Tam\xE1s","V\xC1S\xC1RHELYI TAM\xC1S","Gonzi"],
+        ["Molnár József Gábor","MOLNÁR JÓZSEF","Joe"],
+        ["Papp Zoltán","PAPP ZOLTÁN","Papp"],
+        ["Tamási Ferenc","TAMÁSI FERENC","Feri"],
+        ["Tanai Tamás","TANAI TAMÁS","Tanai"],
+        ["Ujfaludi András","UJFALUDI ANDRÁS","Umbi"],
+        ["Váradi Attila","VÁRADI ATTILA","Ati"],
+        ["Vásárhelyi Tamás","VÁSÁRHELYI TAMÁS","Gonzi"],
         ['Fekete Katalin',"FEKETE KATALIN","Oszi"]
     ];
+    const tanarnevek = "       Tablón szereplő tanáraink: " +
+    "Bodor Imre Tibor  ,  " +
+    "Fekete Katalin of  ,  " +
+    "Kovács Mihály igh  ,  " +
+    "Zombori Béla ig  ,  " +
+    "Kasza Gyuláné igh  ,  " +
+    "Barabás Gábor mhf  ,  " +
+    "Horváth Zoltán  ,  " +
+    "Hámori Zoltán  ,  " +
+    "Tolnai János dr  ,  " +
+    "Danielle Sundberg  ,  " +
+    "Kiss Leskó Gergé  ,  " +
+    "Kámán Ildikó  ,  " +
+    "Molnár Imréné  ,  " +
+    "Tolnai Gábor István  ,  " +
+    "Braun éva  ,  " +
+    "Habóczky Károly  ,  " +
+    "Szegő János  " +
+    "          ";
+
+    const authorstring =  "       Project tabló credits:      ötlet, fejlesztés:"+
+"    Farkas Gábor    ;    hegesztés, forrasztás, fúrás,  segítség:"+
+"    Albert Viktor,  Vásárhelyi Tamás     ;     további support:"+
+"    Kollár László, Kürti Árpád, Tamási Ferenc      |    "+
+"    Az elektronika nyákjai Német tanár úr műhelyében, illetve külső cégnél"+
+" készültek, a fejlesztés Szegő tanár úr műhelyében folyt. Az analóg elektronikai"+
+" tervezésben Suri tanár úr nyújtott segítséget. Az 576 db ledet a Ledland kft"+
+" ajánlotta fel (www.led.hu).  További információ a http://matrix.intro.hu"+
+" honlapon található.       ";
+
+const tanarakmeg = "Tanáraink voltak még:   "+
+"Mr & Mrs Metro  ,  "+
+"Hannah Cawthrone  ,  "+
+"Dennis Hopper  ,  "+
+"Molnár Géza  ,  "+
+"Molnár Pál  ,  "+
+"Nádasdi István  ,  "+
+"Németh Antal  ,  "+
+"Benő László  ,  "+
+"Repcsényi Zoltánné  ,  "+
+"Prófusz Magdolna  ,  "+
+"Nagyné Németh Ildikó  ,  "+
+"Kiss Gábor  ,  "+
+"Hegyiné Závori Szilvia  ,  "+
+"Hámori Zoltán  ,  "+
+"Dési Imre  ,  "+
+"Wittine Mária         ";
+
 
     let scriptGenerator = script(names);
     context.effectFinished = function () {
@@ -43,16 +93,28 @@ function controlScript(context) {
     context.scrplay = startScreenplay(context);
 
     function* script(names) { // I never though I would actually use generator functions for anything ...
-        //yield matrixEffect(context);
-        //yield scrollEffect(context, sideEffect, firstText, 2);
-        yield* massNwp(names);
+        yield matrixEffect(context);
+        yield scrollEffect(context, sideEffect, firstText, 2);
+        while(true) {
+            let rnd = Math.random() * 340;
+            if (rnd < 80) {
+                yield* massNwp(names);
+            } else if (rnd < 160) {
+                yield* massNames(names);
+            } else if (rnd < 300) {
+                yield* scrollValami();
+            } else if (rnd < 310) {
+                yield kukacEffect(context);
+            } else {
+                yield matrixEffect(context);
+            }
+        }
     }
 
-    // nagybetus betunkenti effekt minden sracra + animok
+    // scroll minden sracra + animok
     function* massNames(names) {
         for (let i = 0; i < 27; i ++) {
-            names[i][1]; // capitalized
-            yield scrollEffect(context, sideEffect, names[i][1], 1);
+            yield scrollEffect(context, sideEffect, names[i][0], Math.floor(Math.random() * 3));
             yield animplayEffect(context, names[i][2]);
         }
     }
@@ -63,6 +125,21 @@ function controlScript(context) {
             yield nwpEffect(context, names[i][1]);
             yield animplayEffect(context, names[i][2]);
         }
+    }
+
+    function* scrollValami() {
+        let rnd = Math.floor(Math.random() * 340);
+        let szoveg = null;
+        if (rnd < 100) {
+            szoveg = firstText;
+        } else if (rnd < 200) {
+            szoveg = tanarnevek;
+        } else if (rnd < 300) {
+            szoveg = tanarakmeg;
+        } else {
+            szoveg = authorstring;
+        }
+        yield scrollEffect(context, sideEffect, szoveg, Math.floor(Math.random() * 3));
     }
 
 }

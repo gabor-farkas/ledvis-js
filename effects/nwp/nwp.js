@@ -1,5 +1,3 @@
-// TODO nwp_params		db	5,5,3,5,4,2
-// as letter_increment
 function nwpEffect(context, srcText) {
     function fx1Text(text, buf, x, y) {
         font.writeText(text, x, y, buf, 24, 24, 254, 255);
@@ -89,8 +87,9 @@ function nwpEffect(context, srcText) {
     }
 
     function vertbars(buf1, buf2) {
-        let bl = (counter + 2) / 2;
-        let bh = (12 - bl - 1) * 2;
+        // I changed the logic there to be actually vertical
+        let bl = Math.floor((counter + 1) / 2);
+        let bh = (12 - bl) * 2;
         let src1 = 0;
         let src2 = 0;
         let p = 0;
@@ -138,18 +137,22 @@ function nwpEffect(context, srcText) {
     }
 
     let effects = [fadeBl, fadeCr, horLines, horzSclr, ptab, vertbars];
+    let increments = [5,5,3,5,4,2];
     let effect = null;
+    let increment = 0;
 
     return {
         initialize: () => {
             font.selectFont(1);
-            effect = effects[Math.floor(Math.random() * effects.length)];
+            let effectIndex = Math.floor(Math.random() * effects.length)
+            effect = effects[effectIndex];
+            increment = increments[effectIndex];
         },
         destroy: () => {
 
         },
         step: () => {
-            counter2 += 3;
+            counter2 += increment;
             if (counter2 >= 48) {
                 image ++;
                 if (image == text.length - 1) {
@@ -168,7 +171,7 @@ function nwpEffect(context, srcText) {
             }
             fx1Text(text[image], buf1, 3, -4);
             fx1Text(text[image + 1], buf2, 3, -4);
-            ptab(buf1, buf2);
+            effect(buf1, buf2);
         },
     }
 }

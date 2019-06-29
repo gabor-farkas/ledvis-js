@@ -196,15 +196,18 @@ function matrixEffect(context) {
         }
     }
 
+    let countDown = 11 * 18; // 11 sec * 18 fps
     return {
         initialize: () => {
             matrixStart();
             fallStart();
-            setTimeout(context.effectFinished, 11 * 1000);
         },
         destroy: () => {
         },
         step: () => {
+            if (--countDown <= 0) {
+                context.effectFinished();
+            }
             matrixStep();
         },
         render: () => {
