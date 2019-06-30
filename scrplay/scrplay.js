@@ -3,10 +3,19 @@ function startScreenplay(context) {
     let interval = 55;
 
     let s = document.getElementById('_2dscreen');
+    let ht = null;
     speedUp = function() {
         interval = 10;
+        ht = setTimeout(hyperspeed, 3000);
+    }
+    hyperspeed = function() {
+        ht = null;
+        interval = 1;
     }
     reset = function() {
+        if (ht != null) {
+            clearTimeout(ht);
+        }
         interval = 55;
     }
     s.onmousedown = speedUp;
