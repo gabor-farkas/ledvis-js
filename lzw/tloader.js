@@ -13,7 +13,7 @@ window.template = (function () {
                 let tl_templatelen = fls[0] + (fls[1] << 8);
                 let tl_datalen = fls[4 + tl_templatelen] + (fls[5 + tl_templatelen] << 8) +
                     (fls[6 + tl_templatelen] << 16);
-                descriptorsRaw = new Uint8Array(buffer.slice(4, tl_templatelen));
+                descriptorsRaw = new Uint8Array(buffer.slice(4, tl_templatelen + 4));
                 let compressedData = new Uint8Array(buffer.slice(12 + tl_templatelen));
                 lzw().uncompress(compressedData, uncompressed);
                 decodeAnimations();
