@@ -1,3 +1,5 @@
+import { font } from '../../utils/font.mjs';
+
 function scrollEffect(context, sideEffectFactory, text, effectNumber) {
     let position = 0;
     let textPixelWidth = 0;
@@ -34,3 +36,5 @@ function scrollEffect(context, sideEffectFactory, text, effectNumber) {
         scrollOutbuf: scrollOutbuf
     }
 }
+
+export { scrollEffect };

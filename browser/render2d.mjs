@@ -19,3 +19,4 @@ function init2dRenderer(context, canvasContainer) {
         }
     };
 }
+export { init2dRenderer }

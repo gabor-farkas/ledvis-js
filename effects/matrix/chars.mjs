@@ -92,3 +92,6 @@ const matrixChars =
             0b00110,
             0b00011,
             0b11110]]
+
+
+export { numChars, codeH, codeDot, codeOne, codeThree, matrixChars };

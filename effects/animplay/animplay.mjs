@@ -1,9 +1,11 @@
+import { template } from '../../lzw/tloader.mjs';
+
 function animplayEffect(context, animName) {
     let frame = 0;
     let animDescriptor = null;
     return {
         initialize: () => {
-            animDescriptor = window.template.animDescriptors.filter(desc => desc.name == animName)[0];
+            animDescriptor = template.animDescriptors.filter(desc => desc.name == animName)[0];
         },
         destroy: () => {
 
@@ -16,8 +18,10 @@ function animplayEffect(context, animName) {
         },
         render: () => {
             for (let i = 0; i < 24 * 24; i++) {
-                context.screen[i] = window.template.data[animDescriptor.offset + frame * 24 * 24 + i] * 4;
+                context.screen[i] = template.data[animDescriptor.offset + frame * 24 * 24 + i] * 4;
             }
         }
     }
 }
+
+export { animplayEffect };

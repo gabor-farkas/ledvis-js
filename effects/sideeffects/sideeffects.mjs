@@ -85,3 +85,5 @@ function sideEffect(context, scrollOutbuf, effectNumber) {
         }
     }
 }
+
+export { sideEffect };

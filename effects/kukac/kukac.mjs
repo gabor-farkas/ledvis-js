@@ -1,3 +1,5 @@
+import { random } from '../random.mjs';
+
 function kukacEffect(context) {
     const initiallen = 4;
     const maxlength = 64;
@@ -8,8 +10,8 @@ function kukacEffect(context) {
     const possibleDirections = [
         [0, -1], [1, 0], [0, 1], [-1, 0]
     ];
-    gameCountdown = 3;
-    restartGame = function () {
+    let gameCountdown = 3;
+    let restartGame = function () {
         if (--gameCountdown <= 0) {
             context.effectFinished();
         }
@@ -20,27 +22,27 @@ function kukacEffect(context) {
         placeFood();
         findDirection();
     }
-    placeFood = function () {
+    let placeFood = function () {
         let placed = false;
         do {
             foodPos = [random(23), random(23)];
         } while (doesCollide(foodPos));
     }
-    vectorAdd = function (v1, v2) {
+    let vectorAdd = function (v1, v2) {
         let result = [];
         for (let i = 0; i < v1.length; i++) {
             result.push(v1[i] + v2[i]);
         }
         return result;
     }
-    vectorCompare = function (v1, v2) {
+    let vectorCompare = function (v1, v2) {
         for (let i = 0; i < v1.length; i++) {
             if (v1[i] != v2[i])
                 return false;
         }
         return true;
     }
-    findDirection = function () {
+    let findDirection = function () {
         let head = pixels[0];
         if (head[1] < foodPos[1]) {
             direction = [0, 1];
@@ -71,7 +73,7 @@ function kukacEffect(context) {
             restartGame();
         }
     }
-    doesCollide = function (vector) {
+    let doesCollide = function (vector) {
         if (vector[0] < 0 || vector[0] > 23)
             return true;
         if (vector[1] < 0 || vector[1] > 23)
@@ -83,7 +85,7 @@ function kukacEffect(context) {
         });
         return result;
     }
-    kukacStep = function () {
+    let kukacStep = function () {
         let head = pixels[0];
         let newHead = vectorAdd(head, direction);
         pixels.unshift(newHead);
@@ -98,7 +100,7 @@ function kukacEffect(context) {
             findDirection();
         }
     }
-    kukacRender = function () {
+    let kukacRender = function () {
         for (let i = 0; i < 24 * 24; i++)
             context.screen[i] = 0;
         pixels.forEach(pixel => {
@@ -120,3 +122,5 @@ function kukacEffect(context) {
         }
     }
 }
+
+export { kukacEffect };

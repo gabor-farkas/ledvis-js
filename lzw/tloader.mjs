@@ -1,25 +1,26 @@
-window.template = (function () {
+import { lzw } from './lzw.mjs';
+
+let template = (function () {
     let uncompressed = [];
     let descriptorsRaw;
     let animDescriptors = [];
     let loadResolve = null;
+    let binaryLoadFunction = null;
     let loaded = new Promise((resolve, reject) => {
         loadResolve = resolve;
     });
     function loadTemplate() {
-        fetch('data/images.fls').then(response => {
-            response.arrayBuffer().then(buffer => {
-                let fls = new Uint8Array(buffer);
-                let tl_templatelen = fls[0] + (fls[1] << 8);
-                let tl_datalen = fls[4 + tl_templatelen] + (fls[5 + tl_templatelen] << 8) +
-                    (fls[6 + tl_templatelen] << 16);
-                descriptorsRaw = new Uint8Array(buffer.slice(4, tl_templatelen + 4));
-                let compressedData = new Uint8Array(buffer.slice(12 + tl_templatelen));
-                lzw().uncompress(compressedData, uncompressed);
-                decodeAnimations();
-                loadResolve(true);
-            });
-        })
+        binaryLoadFunction().then(buffer => {
+            let fls = new Uint8Array(buffer);
+            let tl_templatelen = fls[0] + (fls[1] << 8);
+            let tl_datalen = fls[4 + tl_templatelen] + (fls[5 + tl_templatelen] << 8) +
+                (fls[6 + tl_templatelen] << 16);
+            descriptorsRaw = new Uint8Array(buffer.slice(4, tl_templatelen + 4));
+            let compressedData = new Uint8Array(buffer.slice(12 + tl_templatelen));
+            lzw().uncompress(compressedData, uncompressed);
+            decodeAnimations();
+            loadResolve(true);
+        });
     }
     function decodeAnimations() {
         let srcIndex = 0;
@@ -60,8 +61,9 @@ window.template = (function () {
         loadTemplate: loadTemplate,
         data: uncompressed,
         animDescriptors: animDescriptors,
-        loaded: loaded
+        loaded: loaded,
+        setBinaryLoader: (loader) => { binaryLoadFunction = loader }
     }
 })();
 
-window.template.loadTemplate();
+export { template };

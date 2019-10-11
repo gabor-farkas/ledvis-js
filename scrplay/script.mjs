@@ -1,3 +1,11 @@
+import { startScreenplay } from './scrplay.mjs';
+import { matrixEffect } from '../effects/matrix/matrix.mjs';
+import { scrollEffect } from '../effects/scroll/scroll.mjs'
+import { sideEffect } from '../effects/sideeffects/sideeffects.mjs';
+import { nwpEffect } from '../effects/nwp/nwp.mjs';
+import { animplayEffect } from '../effects/animplay/animplay.mjs';
+import { kukacEffect } from '../effects/kukac/kukac.mjs';
+
 function controlScript(context) {
     const firstText = "      Újpesti Két Tanítási Nyelvű Műszaki Szakközépiskola és Gimnázium, 1998-2003, 13.H, osztályfőnök: Fekete Katalin        ";
     //context.effect = testEffect(context);
@@ -144,3 +152,5 @@ const tanarakmeg = "Tanáraink voltak még:   "+
     }
 
 }
+
+export { controlScript }

@@ -1,4 +1,6 @@
-window.font = (function font() {
+import { fonts } from './fontData.mjs';
+
+let font = new (function font() {
     
     const mapping = {
         'Ú': '\xDA',
@@ -23,7 +25,7 @@ window.font = (function font() {
     let fontDefs = [];
     let selectedFontIndex = 0;
     fontRawData.forEach(rawData => {
-        fontDef = {}
+        let fontDef = {}
         fontDefs.push(fontDef);
         fontDef.asciitab = [];
         fontDef.rawData = rawData;
@@ -101,3 +103,5 @@ window.font = (function font() {
     }
     return this;
 })();
+
+export { font };

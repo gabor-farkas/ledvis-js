@@ -36,6 +36,7 @@ function lzw() {
     let lzw_cww = 9;
     let lzw_cwwmask = 0;
     let lzw_cwwmask2 = 0;
+    let lzw_lastcwlen = 0;
     function lzwGetnextcw(lzw_source) {
 
         let esi = lzw_sbp;
@@ -119,3 +120,5 @@ function lzw() {
         uncompress: lzwUncompress
     }
 }
+
+export { lzw };

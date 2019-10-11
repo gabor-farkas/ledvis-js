@@ -1,3 +1,5 @@
+import { numChars, codeH, codeDot, codeOne, codeThree, matrixChars } from './chars.mjs';
+
 function matrixEffect(context) {
     // falling chars
     let counter = 0;
@@ -12,6 +14,7 @@ function matrixEffect(context) {
     ];
     const mblurphases = 8;
     let mblur = [];
+    let mblurlast = null;
 
     // matrix effect
     const blockheight = 16 * 6
@@ -216,3 +219,5 @@ function matrixEffect(context) {
         }
     }
 }
+
+export { matrixEffect };

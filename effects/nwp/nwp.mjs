@@ -1,3 +1,5 @@
+import { font } from '../../utils/font.mjs';
+
 function nwpEffect(context, srcText) {
     function fx1Text(text, buf, x, y) {
         font.writeText(text, x, y, buf, 24, 24, 254, 255);
@@ -175,3 +177,5 @@ function nwpEffect(context, srcText) {
         },
     }
 }
+
+export { nwpEffect };

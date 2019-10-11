@@ -1,22 +1,5 @@
 <html>
     <head>
-        <script src="browser/render2d.js"></script>
-        <script src="scrplay/scrplay.js"></script>
-        <script src="scrplay/script.js"></script>
-        <script src="utils/fontData.js"></script>
-        <script src="utils/font.js"></script>
-        <script src="effects/test/test.js"></script>
-        <script src="effects/random.js"></script>
-        <script src="effects/kukac/kukac.js"></script>
-        <script src="effects/nwp/nwp.js"></script>
-        <script src="effects/matrix/chars.js"></script>
-        <script src="effects/matrix/matrix.js"></script>
-        <script src="effects/scroll/scroll.js"></script>
-        <script src="effects/sideeffects/sideeffects.js"></script>
-        <script src="effects/animplay/animplay.js"></script>
-        <script src="lzw/lzw.js"></script>
-        <script src="lzw/tloader.js"></script>
-
         <style>
                 body {
                     background: #222;
@@ -39,13 +22,21 @@
     </head>
     <body>
         <div id='_2dscreen'></div>
-        <script>
+        <script type="module">
+            import { init2dRenderer } from './browser/render2d.mjs';
+            import { template, controlScript } from './main.mjs';
+            template.setBinaryLoader(() => {
+                return fetch('data/images.fls').then(response => {
+                    return response.arrayBuffer();
+                });
+            });
+            template.loadTemplate();
             let context = {};
             window.matrix = {};
             window.matrix.fastMode = false;
             context.screen = [];
             context.renderer = init2dRenderer(context, document.getElementById('_2dscreen'));
-            window.template.loaded.then(() => {
+            template.loaded.then(() => {
                 controlScript(context);
             });
         </script>
