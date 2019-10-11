@@ -1,0 +1,12 @@
+{
+  "name": "native-pwm",
+  "version": "1.0.0",
+  "main": "bindings.js",
+  "scripts": {
+    "build": "node-gyp build",
+    "install": "node-gyp rebuild"
+  },
+  "dependencies": {
+    "nan": "^2.7.0"
+  }
+}
