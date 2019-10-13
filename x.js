@@ -2,9 +2,10 @@ const pwmModule = require('./native-pwm');
 let pwm = new pwmModule.Pwm();
 let t = 0;
 function blink() {
-  pwm.test([Math.sin(t) * 450 + 500, 1000]);
+  let fill = Math.sin(t) * 249 + 250;
+  pwm.test([fill, 1000]);
   t += 0.1;
-  console.log("blinkie", t);
+  console.log("blinkie", fill);
   setTimeout(blink, 50);
 }
 blink();

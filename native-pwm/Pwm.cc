@@ -5,47 +5,66 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
-
-#define BCM2708_PERI_BASE         0x3F000000 /* for rpi2+ 8*/
-#define GPIO_BASE                (BCM2708_PERI_BASE + 0x200000) /* GPIO controller */
-
-#define PAGE_SIZE (4*1024)
-#define BLOCK_SIZE (4*1024)
-
-int  mem_fd;
-void *gpio_map = 0;
-
-// I/O access
-volatile unsigned *gpio;
-
-
-// GPIO setup macros. Always use INP_GPIO(x) before using OUT_GPIO(x) or SET_GPIO_ALT(x,y)
-#define INP_GPIO(g) *(gpio+((g)/10)) &= ~(7<<(((g)%10)*3))
-#define OUT_GPIO(g) *(gpio+((g)/10)) |=  (1<<(((g)%10)*3))
-#define SET_GPIO_ALT(g,a) *(gpio+(((g)/10))) |= (((a)<=3?(a)+4:(a)==4?3:2)<<(((g)%10)*3))
-
-#define GPIO_SET *(gpio+7)  // sets   bits which are 1 ignores bits which are 0
-#define GPIO_CLR *(gpio+10) // clears bits which are 1 ignores bits which are 0
-
+#include <sys/ioctl.h>
+#include <linux/i2c-dev.h>
+#include <sys/time.h>
 
 Nan::Persistent<v8::FunctionTemplate> Pwm::constructor;
 
 int t_fill = 500000;
 int t_span = 1000000;
 
+int file_i2c;
+
+void startupI2c() {
+  char *filename = (char*)"/dev/i2c-1";
+  if ((file_i2c = open(filename, O_RDWR)) < 0) {
+    printf("Cannot open i2c bus");
+    return;
+  }
+  if (ioctl(file_i2c, I2C_SLAVE, 0x20) < 0) {
+    printf("Failed to acquire bus");
+  }
+}
+
+void writeReg(int addr, int val) {
+  unsigned char buffer[2] = {addr, val};
+  if (write(file_i2c, buffer, 2) != 2) {
+    printf("Couldn't write to i2c");
+  }
+}
+
+void setupMux() {
+  writeReg(0x05, 0b00100000); // force bank to 0
+  writeReg(0x0A, 0b00100000); // IOCON bank = 0, seqop disabled
+  writeReg(0x00, 0x00); // A as outputs
+  writeReg(0x01, 0x00); // B as outputs
+  writeReg(0x12, 0x00); // output on A
+  writeReg(0x13, 0x00); // output on B
+  printf("mux configured");
+}
+
 void pwmThread() {
+   struct timeval now, pulse;
    while (true) {
+	// gettimeofday(&pulse, NULL);
 	if (t_fill > 0) {
-    	    GPIO_SET = 1 << 2;
-	    usleep(t_fill);
+	    if (t_fill < 60) {
+		unsigned char buffer[4] = {0x12, 0xFF, 0x12, 0x00}; // just quick blink
+		write(file_i2c, buffer, 4);
+	    } else {
+	        writeReg(0x12, 0xFF);
+	        usleep(t_fill);
+	    }
 	}
-	GPIO_CLR = 1 << 2;
+	writeReg(0x12, 0x00);
+	 //gettimeofday(&now, NULL);
 	usleep(t_span - t_fill);
+	//printf("%d\n", now.tv_usec - pulse.tv_usec);
     }
 }
 
 std::thread t1;
-
 
 NAN_MODULE_INIT(Pwm::Init) {
   v8::Local<v8::FunctionTemplate> ctor = Nan::New<v8::FunctionTemplate>(Pwm::New);
@@ -57,37 +76,10 @@ NAN_MODULE_INIT(Pwm::Init) {
 
   target->Set(Nan::New("Pwm").ToLocalChecked(), ctor->GetFunction());
 
-  // setup io
-    /* open /dev/mem */
-   if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
-      printf("can't open /dev/mem \n");
-      exit(-1);
-   }
+  startupI2c();
+  setupMux();
 
-   /* mmap GPIO */
-   gpio_map = mmap(
-      NULL,             //Any adddress in our space will do
-      BLOCK_SIZE,       //Map length
-      PROT_READ|PROT_WRITE,// Enable reading & writting to mapped memory
-      MAP_SHARED,       //Shared with other processes
-      mem_fd,           //File to map
-      GPIO_BASE         //Offset to GPIO peripheral
-   );
-
-   close(mem_fd); //No need to keep mem_fd open after mmap
-
-   if (gpio_map == MAP_FAILED) {
-      printf("mmap error %d\n", (int)gpio_map);//errno also set!
-      exit(-1);
-   }
-
-   // Always use volatile pointer!
-   gpio = (volatile unsigned *)gpio_map;
-
-   INP_GPIO(2);
-   OUT_GPIO(2);
-
-   t1 = std::thread(pwmThread);
+  t1 = std::thread(pwmThread);
 }
 
 NAN_METHOD(Pwm::New) {
@@ -115,3 +107,4 @@ NAN_METHOD(Pwm::Test) {
 
   info.GetReturnValue().Set(0);
 }
+
