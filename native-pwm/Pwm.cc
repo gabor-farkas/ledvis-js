@@ -11,8 +11,7 @@
 
 Nan::Persistent<v8::FunctionTemplate> Pwm::constructor;
 
-int t_fill = 500000;
-int t_span = 1000000;
+int t_fill = 500;
 
 int file_i2c;
 
@@ -46,20 +45,13 @@ void setupMux() {
 
 void pwmThread() {
    struct timeval now, pulse;
+   char * buffer = (char *) malloc(2000);
    while (true) {
+	wmemset((wchar_t *)buffer, 0xFF12, t_fill);
+	wmemset((wchar_t *)(buffer + 2 * t_fill), 0x0012, 1000 - t_fill);
+	write(file_i2c, buffer, 2000);
 	// gettimeofday(&pulse, NULL);
-	if (t_fill > 0) {
-	    if (t_fill < 60) {
-		unsigned char buffer[4] = {0x12, 0xFF, 0x12, 0x00}; // just quick blink
-		write(file_i2c, buffer, 4);
-	    } else {
-	        writeReg(0x12, 0xFF);
-	        usleep(t_fill);
-	    }
-	}
-	writeReg(0x12, 0x00);
 	 //gettimeofday(&now, NULL);
-	usleep(t_span - t_fill);
 	//printf("%d\n", now.tv_usec - pulse.tv_usec);
     }
 }
@@ -103,7 +95,8 @@ NAN_METHOD(Pwm::Test) {
   v8::Local<v8::Array> jsArr = v8::Local<v8::Array>::Cast(info[0]);
 
   t_fill = (int) jsArr->Get(0)->NumberValue();
-  t_span = (int) jsArr->Get(1)->NumberValue();
+  if (t_fill < 0) t_fill = 0;
+  if (t_fill > 1000) t_fill = 1000;
 
   info.GetReturnValue().Set(0);
 }
