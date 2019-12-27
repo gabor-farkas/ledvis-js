@@ -4,6 +4,7 @@ let t = 0;
 function blink() {
   let fill = Math.sin(t) * 499 + 500;
   pwm.test([fill, 1000]);
+  //pwm.test([500000, 1000000]);
   t += 0.1;
   console.log("blinkie", fill);
   setTimeout(blink, 50);
