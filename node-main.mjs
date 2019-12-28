@@ -5,7 +5,7 @@ const require = createRequire(import.meta.url);
 
 const pwmModule = require('./native-pwm');
 let pwm = new pwmModule.Pwm();
-pwm.adjust([64, 10000, 1000]);
+pwm.adjust([64, 10000, 500]);
 
 template.setBinaryLoader(() => {
     let buffer = fs.readFileSync('./data/images.fls');
@@ -29,7 +29,12 @@ context.renderer.render = () => {
         console.log(line);
     }
     */
-    if (!stop) pwm.test(context.screen);
+    let adjusted = [];
+    for (let i = 0; i < 24 * 24; i ++) {
+       adjusted[i] = 255 - Math.cos(context.screen[i] / 256 * Math.PI / 2) * 255;
+       adjusted[i] = 255 - Math.cos(adjusted[i] / 256 * Math.PI / 2) * 255;
+    }
+    if (!stop) pwm.test(adjusted);
 };
 template.loaded.then(() => {
     controlScript(context);
