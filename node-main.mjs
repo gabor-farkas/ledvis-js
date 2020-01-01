@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { template, controlScript } from './main.mjs';
 import { createRequire } from 'module';
+import express from 'express';
 const require = createRequire(import.meta.url);
 
 const pwmModule = require('./native-pwm');
@@ -52,4 +53,13 @@ process.stdin.on('data', () => {
   setTimeout(() => { process.exit(0) }, 100);
 });
 
-
+const app = express();
+app.use(express.static('static'));
+app.get('/data', (req, res) => {
+	res.send('' + JSON.stringify(context.screen));
+});
+app.get('/interval', (req, res) => {
+	context.interval = req.query.interval;
+	res.send('OK');
+});
+app.listen(80, () => console.log('listening'));

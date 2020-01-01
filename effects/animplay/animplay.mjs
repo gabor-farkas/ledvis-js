@@ -5,6 +5,7 @@ function animplayEffect(context, animName) {
     let animDescriptor = null;
     return {
         initialize: () => {
+	    console.log("Starting animation for " + animName);
             animDescriptor = template.animDescriptors.filter(desc => desc.name == animName)[0];
         },
         destroy: () => {

@@ -145,6 +145,7 @@ function nwpEffect(context, srcText) {
 
     return {
         initialize: () => {
+	    console.log("Starting nwp");
             font.selectFont(1);
             let effectIndex = Math.floor(Math.random() * effects.length)
             effect = effects[effectIndex];

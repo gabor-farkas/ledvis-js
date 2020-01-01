@@ -122,6 +122,7 @@ const tanarakmeg = "Tanáraink voltak még:   "+
 
     // scroll minden sracra + animok
     function* massNames(names) {
+	console.log("Starting massnames");
         for (let i = 0; i < 27; i ++) {
             yield scrollEffect(context, sideEffect, names[i][0], Math.floor(Math.random() * 3));
             yield animplayEffect(context, names[i][2]);
@@ -130,6 +131,7 @@ const tanarakmeg = "Tanáraink voltak még:   "+
 
     // nagybetus betunkenti effekt minden sracra + animok
     function* massNwp(names) {
+	console.log("Starting mass nwp");
         for (let i = 0; i < 27; i ++) {
             yield nwpEffect(context, names[i][1]);
             yield animplayEffect(context, names[i][2]);
@@ -148,6 +150,7 @@ const tanarakmeg = "Tanáraink voltak még:   "+
         } else {
             szoveg = authorstring;
         }
+	console.log("Starting scroll for: " + szoveg);
         yield scrollEffect(context, sideEffect, szoveg, Math.floor(Math.random() * 3));
     }
 
