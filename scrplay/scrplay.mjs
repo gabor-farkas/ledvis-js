@@ -1,23 +1,23 @@
 function startScreenplay(context) {
 
-    let interval = 55;
+    context.interval = 55;
 
     if (typeof document !== 'undefined') {
         let s = document.getElementById('_2dscreen');
         let ht = null;
         let speedUp = function() {
-            interval = 10;
+            context.interval = 10;
             ht = setTimeout(hyperspeed, 3000);
         }
         let hyperspeed = function() {
             ht = null;
-            interval = 1;
+            context.interval = 1;
         }
         let reset = function() {
             if (ht != null) {
                 clearTimeout(ht);
             }
-            interval = 55;
+            context.interval = 55;
         }
         s.onmousedown = speedUp;
         s.onmouseup = reset;
@@ -32,11 +32,11 @@ function startScreenplay(context) {
     */
     context.timeMs = 0;
     function mainStep() {
-        context.timeMs += interval;
+        context.timeMs += context.interval;
         context.effect.step();
         context.effect.render();
         context.renderer.render();
-        setTimeout(mainStep, interval);
+        setTimeout(mainStep, context.interval);
     }
     mainStep();
 }

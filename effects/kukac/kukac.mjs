@@ -110,6 +110,7 @@ function kukacEffect(context) {
     }
     return {
         initialize: () => {
+	    console.log("Starting snake");
             restartGame();
         },
         destroy: () => {

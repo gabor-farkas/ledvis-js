@@ -202,6 +202,7 @@ function matrixEffect(context) {
     let countDown = 11 * 18; // 11 sec * 18 fps
     return {
         initialize: () => {
+	    console.log("Starting matrix");
             matrixStart();
             fallStart();
         },

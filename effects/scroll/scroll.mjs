@@ -7,6 +7,7 @@ function scrollEffect(context, sideEffectFactory, text, effectNumber) {
     let sideEffect;
     return {
         initialize: () => {
+	    console.log("Starting scroll: " + text);
             position = 0;
             font.selectFont(0);
             textPixelWidth = 0;
