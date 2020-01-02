@@ -51,6 +51,10 @@ volatile unsigned *gpio;
 #define gpioSet(g) GPIO_SET = 1 << (g);
 #define gpioClr(g) GPIO_CLR = 1 << (g);
 
+/**
+ * We write the GPIO registers using direct memory (I/O) register access on the SoC level.
+ * This allows higher speeds than other GPIO drivers, but we need root access.
+*/
 void setupGPIO() {
  // setup io
     /* open /dev/mem */
@@ -85,11 +89,12 @@ void setupGPIO() {
 
 void setupController() {
   setupGPIO();
+  // setup pin modes. We need to use INP before setting OUT (it's just due to the way the macros are written above)
   for (int i = COL_REG; i <= N_C_OE; i ++) {
     INP_GPIO(i);
     OUT_GPIO(i);
   }
-  gpioSet(N_C_OE); // disable output
+  gpioSet(N_C_OE); // disable column output
   // clear column load wires
   for (int i = LOAD_COL; i < LOAD_COL + 6; i ++) {
     gpioClr(i);
@@ -115,45 +120,57 @@ void pwmThread() {
          gpioSet(COL_REG);
          gpioSet(LOAD_COL);
          gpioClr(LOAD_COL);
-	 usleep(t_fill);
+	       usleep(t_fill);
        }
        gpioClr(COL_REG);
        gpioSet(LOAD_COL);
        gpioClr(LOAD_COL);
        usleep(t_span - t_fill);
     } else {
-	// full-screen PWM
-	unsigned char threshold = 255 - cycle * 255 / pwmCycles;
-	int subrow = row % 8;
-	gpioSet(N_C_OE);
-	gpioClr(RB1);gpioClr(RB2);
-	for (int i = 0; i < turnOffWait; i ++) gpioClr(N_C_OE);
-	if (subrow & 1) gpioSet(ROW_ADDR) else gpioClr(ROW_ADDR);
-	if (subrow & 2) gpioSet(ROW_ADDR + 1) else gpioClr(ROW_ADDR + 1);
-	if (subrow & 4) gpioSet(ROW_ADDR + 2) else gpioClr(ROW_ADDR + 2);
-	int srcIndex = row * 24;
-	for (int cg = 0; cg < 6; cg ++) {
-	  for (int bit = 0; bit < 8; bit ++) {
-	    if (screen[srcIndex++] < threshold) {
-	      gpioClr(COL_REG + bit);
-	    } else {
-	      gpioSet(COL_REG + bit);
-	    }
-	  }
-	  gpioSet(LOAD_COL + cg);
-	  gpioClr(LOAD_COL + cg);
-	  if (cg == 2) srcIndex += 11*24; //skip to bottom part
-	}
-	if (row < 8) gpioSet(RB1) else gpioSet(RB2);
-	gpioClr(N_C_OE);
+      // full-screen PWM
+      unsigned char threshold = 255 - cycle * 255 / pwmCycles;
+      int subrow = row % 8;
+      // turn off output
+      gpioSet(N_C_OE);
+      gpioClr(RB1);gpioClr(RB2);
+      // wait for turnoff to complete
+      for (int i = 0; i < turnOffWait; i ++) gpioClr(N_C_OE);
+      // set the new row address
+      if (subrow & 1) gpioSet(ROW_ADDR) else gpioClr(ROW_ADDR);
+      if (subrow & 2) gpioSet(ROW_ADDR + 1) else gpioClr(ROW_ADDR + 1);
+      if (subrow & 4) gpioSet(ROW_ADDR + 2) else gpioClr(ROW_ADDR + 2);
+      // set the new column register values
+      int srcIndex = row * 24;
+      for (int cg = 0; cg < 6; cg ++) {
+        for (int bit = 0; bit < 8; bit ++) {
+          if (screen[srcIndex++] < threshold) {
+            gpioClr(COL_REG + bit);
+          } else {
+            gpioSet(COL_REG + bit);
+          }
+        }
+        gpioSet(LOAD_COL + cg);
+        gpioClr(LOAD_COL + cg);
+        if (cg == 2) srcIndex += 11*24; //skip to bottom part
+      }
+      // turn on output
+      if (row < 8) gpioSet(RB1) else gpioSet(RB2);
+      gpioClr(N_C_OE);
 
-	// some active wait
-	for (int i = 0; i < activeWait; i ++) gpioClr(N_C_OE);
+      /* Some active wait to hold the output for a given time.
+       * I just wanted to avoid working with timers here. It
+       * would make overall timing more reliable probably, but the
+       * current result is visually acceptable.
+       * We could increase timing reliability by running the PWM itself
+       * in a different process with high priority and processor affinity,
+       * in theory we have a 4-core processor after all.
+      */
+      for (int i = 0; i < activeWait; i ++) gpioClr(N_C_OE);
 
-	if (++row >= 12) {
-	  if (++cycle >= pwmCycles) cycle = 0;
-	  row = 0;
-	}
+      if (++row >= 12) {
+        if (++cycle >= pwmCycles) cycle = 0;
+        row = 0;
+      }
     }
   }
 }
@@ -166,7 +183,7 @@ NAN_MODULE_INIT(Pwm::Init) {
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
   ctor->SetClassName(Nan::New("Pwm").ToLocalChecked());
 
-  Nan::SetPrototypeMethod(ctor, "test", Test);
+  Nan::SetPrototypeMethod(ctor, "setScreenData", Test);
   Nan::SetPrototypeMethod(ctor, "adjust", Adjust);
 
   target->Set(Nan::GetCurrentContext(), Nan::New("Pwm").ToLocalChecked(), ctor->GetFunction(Nan::GetCurrentContext()).ToLocalChecked()).FromJust();
@@ -190,7 +207,7 @@ NAN_METHOD(Pwm::New) {
   info.GetReturnValue().Set(info.Holder());
 }
 
-NAN_METHOD(Pwm::Test) {
+NAN_METHOD(Pwm::SetScreenData) {
   // unwrap this Pwm
 //  Pwm * self = Nan::ObjectWrap::Unwrap<Pwm>(info.This());
 
