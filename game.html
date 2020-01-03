@@ -3,7 +3,12 @@
     <body>
         <button onclick="connect()">Start</button>
 
+        <input type="text" id="textInput">
+        <button onclick="send()" disabled="true" id="sendButton">Send</button>
+
         <script>
+
+let _characteristic = null;
 
 function connect() {
     let opts = {
@@ -25,17 +30,17 @@ function connect() {
         return service.getCharacteristic('00000002-1e3c-fad4-74e2-97a033f1bfaa')
     })
     .then(characteristic => {
-        console.log('getting value');
-        return characteristic.readValue()
-    })
-    .then(value =>  {
-        console.log('received');
-        let str = "";
-        for (let i = 0; i<value.byteLength; i++)
-            str += String.fromCharCode(value.getUint8(i));
-        alert(str);
+        _characteristic = characteristic;
+        console.log('Accessed characteristic');
+        document.getElementById("sendButton").disabled = false;
     })
     .catch(error => { alert('error: ' + error) });
+}
+
+function send() {
+    let value = document.getElementById("textInput").value;
+    var uint8array = new TextEncoder().encode(value);
+    _characteristic.writeValue(uint8array);
 }
 
         </script>
