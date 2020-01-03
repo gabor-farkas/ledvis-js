@@ -30,7 +30,10 @@ function connect() {
     })
     .then(value =>  {
         console.log('received');
-        alert(value)
+        let str = "";
+        for (let i = 0; i<value.byteLength; i++)
+            str += String.fromCharCode(value.getUint8(i));
+        alert(str);
     })
     .catch(error => { alert('error: ' + error) });
 }
