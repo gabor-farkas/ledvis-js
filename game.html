@@ -7,15 +7,32 @@
 
 function connect() {
     let opts = {
-    filters: [{ name: 'Gobbledego' }]
+    filters: [{ namePrefix: 'G' }],
+    optionalServices: ['00000001-1e3c-fad4-74e2-97a033f1bfaa']
     };
-    alert('connecting ' + JSON.stringify(opts));
+    console.log('connecting ' + JSON.stringify(opts));
     navigator.bluetooth.requestDevice(opts)
     .then(device => { 
-        alert('connected');
-        console.log(device);
+        console.log('connected' + device.name);
+        return device.gatt.connect();
     })
-    .catch(error => { alert('' + error) });
+    .then(server => { 
+        console.log('getting service')
+        return server.getPrimaryService('00000001-1e3c-fad4-74e2-97a033f1bfaa')
+    })
+    .then(service => {
+        console.log('getting characteristic')
+        return service.getCharacteristic('00000002-1e3c-fad4-74e2-97a033f1bfaa')
+    })
+    .then(characteristic => {
+        console.log('getting value');
+        return characteristic.readValue()
+    })
+    .then(value =>  {
+        console.log('received');
+        alert(value)
+    })
+    .catch(error => { alert('error: ' + error) });
 }
 
         </script>
