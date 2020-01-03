@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+    <body>
+        <button onclick="connect()">Start</button>
+
+        <script>
+
+function connect() {
+    let opts = {
+    filters: [{ name: 'Gobbledego' }]
+    };
+    alert('connecting ' + JSON.stringify(opts));
+    navigator.bluetooth.requestDevice(opts)
+    .then(device => { 
+        alert('connected');
+        console.log(device);
+    })
+    .catch(error => { alert('' + error) });
+}
+
+        </script>
+    </body>
+</html>
