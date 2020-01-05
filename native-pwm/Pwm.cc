@@ -183,7 +183,7 @@ NAN_MODULE_INIT(Pwm::Init) {
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
   ctor->SetClassName(Nan::New("Pwm").ToLocalChecked());
 
-  Nan::SetPrototypeMethod(ctor, "setScreenData", Test);
+  Nan::SetPrototypeMethod(ctor, "setScreenData", SetScreenData);
   Nan::SetPrototypeMethod(ctor, "adjust", Adjust);
 
   target->Set(Nan::GetCurrentContext(), Nan::New("Pwm").ToLocalChecked(), ctor->GetFunction(Nan::GetCurrentContext()).ToLocalChecked()).FromJust();

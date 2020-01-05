@@ -60,15 +60,17 @@ function renderOnConsole() {
 
 console.log('Press any key to exit');
 
-process.stdin.setRawMode(true);
-process.stdin.resume();
-process.stdin.on('data', () => {
-  stop = true;
-  let screen = [];
-  for (let i = 0; i < 24*24; i++) screen[i] = 0;
-  pwm.test(screen);
-  setTimeout(() => { process.exit(0) }, 100);
-});
+if (process.stdin.setRawMode) {
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  process.stdin.on('data', () => {
+    stop = true;
+    let screen = [];
+    for (let i = 0; i < 24*24; i++) screen[i] = 0;
+    pwm.setScreenData(screen);
+    setTimeout(() => { process.exit(0) }, 100);
+  });
+}
 
 /**
  * Use a local webserver to allow monitoring of the animation over http
@@ -83,6 +85,10 @@ app.get('/data', (req, res) => {
 // allows controlling the speed of the animation the same way as the browser-standalone version
 app.get('/interval', (req, res) => {
 	context.interval = req.query.interval;
+	res.send('OK');
+});
+app.get('/control', (req, res) => {
+	console.log(JSON.stringify(req.query));
 	res.send('OK');
 });
 app.listen(80, () => console.log('listening'));
