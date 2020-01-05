@@ -35,4 +35,16 @@ This LED Driver panel is controlled over Raspberry GPIO pins by using these sign
 * 2 output enable wires for each demultiplexer
 * An output enable wire for all column registers
 
+![The schematic](static/tablo.svg)
+
 https://github.com/gabor-farkas/tablo/tree/master/nyak/tablo
+
+## The software
+
+## On the raspberry
+2do
+* Raspbian
+* NodeJS 12 for experimental-module
+* Sudo to access the system memory
+* An init.d script for startup, 'forever' to keep things running
+* Remote access over mobile Wifi AP.
